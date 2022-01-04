@@ -1,0 +1,41 @@
+<launch>
+
+  <arg name="tf_prefix"             default="turtlebot_1_tf"/>
+  <arg name="robot_ns"              default="turtlebot_1"/>
+  <arg name="map_file"              default="/home/sergi/sources/robin50/robin50_navigation/maps/2floor_ydlidar.yaml"/>
+  <arg name="x"                     default="0"/>
+  <arg name="y"                     default="0"/>
+  <arg name="yaw"                   default="0"/>
+  <arg name="merge_costmaps"        default="False"/>
+
+  <!-- GAZEBO WORLD -->
+  <include file="$(find map2gazebo)/launch/gazebo_world.launch"/>
+
+  <!-- ROBOT LAUNCH -->
+  <group ns="$(arg robot_ns)">
+    <param name="tf_prefix"         value="$(arg tf_prefix)"/>
+    <!-- TURTLEBOT LAUNCH -->
+    <include file="$(find costmap_merge)/launch/robots/turtlebot.launch">
+      <arg name="robot_ns"          value="$(arg robot_ns)"/>
+      <arg name="tf_prefix"         value="$(arg tf_prefix)"/>
+      <arg name="x"                 value="$(arg x)"/>
+      <arg name="y"                 value="$(arg y)"/>
+      <arg name="yaw"               value="$(arg yaw)"/>
+      <arg name="merge_costmaps"    value="$(arg merge_costmaps)"/>
+    </include>
+    <!-- AMCL -->
+    <include file="$(find robin50_launch)/launch/navigation/robin50_amcl.launch">
+      <arg name="robot_ns"          value="$(arg robot_ns)"/>
+      <arg name="tf_prefix"         value="$(arg tf_prefix)"/>
+      <arg name="initial_pose_x"    value="$(arg x)"/>
+      <arg name="initial_pose_y"    value="$(arg y)"/>
+      <arg name="initial_pose_yaw"  value="$(arg yaw)"/>
+      <arg name="map_file"          value="$(arg map_file)"/>
+      <arg name="3d_sensor"         default="cyglidar"/>
+    </include>
+  </group>
+
+  <!-- RVIZ -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find costmap_merge)/rviz/sim_1_robots.rviz"/>
+
+</launch>
