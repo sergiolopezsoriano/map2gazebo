@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robot_ns"            default="turtlebot_1"/>
+    <arg name="waypoints_file"      default="3floor"/>
+    <arg name="trajectories_file"   default="3floor"/>
+    <node pkg="robin50_navigation" type="wp_navigation.py" name="wp_navigation" output="screen" ns="$(arg robot_ns)">
+        <rosparam file="$(find robin50_navigation)/config/wp_navigation.yaml" command="load" />
+        <rosparam file="$(find robin50_navigation)/config/waypoints/$(arg waypoints_file).yaml" command="load"/>
+        <rosparam file="$(find robin50_navigation)/config/trajectories/$(arg trajectories_file).yaml" command="load"/>
+    </node>
+</launch>
